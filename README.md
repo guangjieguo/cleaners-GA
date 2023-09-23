@@ -9,7 +9,7 @@ periodically at a charging station, where also the bin is emptied. The objective
 maximal area. Oh, and the final complication is that there is another population of cleaners
 on the field, competing for cleaning credits. My algorithm should find behaviours that
 lead to the most cleaning done by your cleaners.The engine is given by our lecturer Lech Szymanski. 
-My jod is to build my_agent.py for implementingngenetic algorithm to obtain a population of
+My jod is to build my_agent.py for using genetic algorithm to obtain a population of
 40 cleaners with good performance. 
 
 For the detail of the algorithm and the evaluation, please see my_report.pdf. 
