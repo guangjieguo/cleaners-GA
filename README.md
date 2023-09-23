@@ -13,3 +13,6 @@ My jod is to build my_agent.py for using genetic algorithm to obtain a populatio
 40 cleaners with good performance. 
 
 For the detail of the algorithm and the evaluation, please see my_report.pdf. 
+
+![1695509333781](https://github.com/guangjieguo/cleaners_GA/assets/145815863/b1317442-28bf-49d5-a385-e7861dde3761)
+
