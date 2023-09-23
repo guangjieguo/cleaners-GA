@@ -18,13 +18,11 @@ def top_n_indices(lst, n):
     indices = sorted(range(len(lst)), key=lambda i: lst[i], reverse=True)[:n]
     return indices
 
-# This is the class for your cleaner/agent
+# This is the class for cleaner/agent
 class Cleaner:
 
     def __init__(self, nPercepts, nActions, gridSize, maxTurns):
         # This is where agent initialisation code goes (including setting up a chromosome with random values)
-
-        # Leave these variables as they are, even if you don't use them in your AgentFunction - they are
         # needed for initialisation of children Cleaners.
         self.nPercepts = nPercepts
         self.nActions = nActions
@@ -33,18 +31,6 @@ class Cleaner:
 
         self.chromosome = np.random.uniform(0, 1, size=(self.nActions,
                                                 int((self.nPercepts-14)+(self.nPercepts-14)*(self.nPercepts-15)/2)))
-
-        # self.chromosome = np.random.normal(0, 1, size=(self.nActions,
-        #                                              int((self.nPercepts - 14) + (self.nPercepts - 14) * (
-        #                                                          self.nPercepts - 15) / 2)))
-
-        # self.chromosome = np.random.randint(-5, 6, size=(self.nActions,
-        #                                             int((self.nPercepts - 14) + (self.nPercepts - 14) * (
-        #                                                         self.nPercepts - 15) / 2)))
-
-        # self.chromosome = np.random.randint(0, 101, size=(self.nActions,
-        #                                              int((self.nPercepts - 14) + (self.nPercepts - 14) * (
-        #                                                      self.nPercepts - 15) / 2)))
 
     def AgentFunction(self, percepts):
 
@@ -101,13 +87,9 @@ class Cleaner:
         # Different 'self.chromosome' should lead to different 'actions'.  This way different
         # agents can exhibit different behaviour.
 
-        # Right now this agent ignores percepts and chooses a random action.  Your agents should not
-        # perform random actions - your agents' actions should be deterministic from
-        # computation based on self.chromosome and percepts
+        # My agent is using quadratic polynomial as agent function.
         x_vector = np.hstack((combined.flatten(), vertical_bots.flatten(), horizontal_bots.flatten()))
         x_vector = x_vector.tolist()
-
-        # x_vector = visual.flatten().tolist()
         x_vector.append(energy)
         x_vector.append(bin)
         x_vector.append(fails)
@@ -150,10 +132,8 @@ def evalFitness(population):
         # You SHOULD consider augmenting it with information from other stats as well.  You DON'T HAVE TO make use
         # of every stat.
 
-        # fitness[n] = (cleaner.game_stats['cleaned'] + cleaner.game_stats['emptied'] + cleaner.game_stats['visits'])
+        # This is the best one among many cases I have tried.
         fitness[n] = cleaner.game_stats['emptied'] + cleaner.game_stats['visits']/15
-        # fitness[n] = cleaner.game_stats['emptied']
-
 
     return fitness
 
