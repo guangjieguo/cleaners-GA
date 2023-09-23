@@ -6,14 +6,16 @@ import numpy as np
 
 agentName = "<my_agent>"
 
-generation_count = 0
-fitness_5g = np.zeros((40))
+generation_count = 0           # This quantity is used to record which generation this is.
+fitness_5g = np.zeros((40))    # This array stores the sum of fitness of each cleaner in five consecutive games.
 
 # trainingSchedule = None
 # trainingSchedule = [('random', 100), ('self', 100), ('random', 100), ('self', 100),
 #                     ('random', 100)]
+
 trainingSchedule = [('random', 10000)]
 
+# This is a function to select the indices of top n elements.
 def top_n_indices(lst, n):
     indices = sorted(range(len(lst)), key=lambda i: lst[i], reverse=True)[:n]
     return indices
@@ -109,7 +111,7 @@ def evalFitness(population):
     # Fitness initialiser for all agents
     fitness = np.zeros((N))
 
-    # This loop iterates over your agents in the old population - the purpose of this boilerplate
+    # This loop iterates over agents in the old population - the purpose of this boilerplate
     # code is to demonstrate how to fetch information from the old_population in order
     # to score fitness of each agent
     for n, cleaner in enumerate(population):
@@ -127,10 +129,6 @@ def evalFitness(population):
         #  cleaner.game_stats['recharge_energy'] - int, total energy gained from the charging station
         #  cleaner.game_stats['visits'] - int, total number of squares visited (visiting the same square twice counts
         #                                      as one visit)
-
-        # This fitness functions considers total number of cleaned squares.  This may NOT be the best fitness function.
-        # You SHOULD consider augmenting it with information from other stats as well.  You DON'T HAVE TO make use
-        # of every stat.
 
         # This is the best one among many cases I have tried.
         fitness[n] = cleaner.game_stats['emptied'] + cleaner.game_stats['visits']/15
@@ -158,35 +156,37 @@ def newGeneration(old_population):
     global generation_count, fitness_5g
     generation_count += 1
     fitness_5g += fitness
-    # Create new population list...
+    
+    # Create a new population list every five games
     if generation_count%5 == 0:
-        numelits = 15
-        mutation_rate_child = 1
-        mutation_rate = 0.01
+        numelits = 15    # Elitism setting
+        mutation_rate_child = 1    # Mutation rate per cleaner
+        mutation_rate = 0.01     # Mutation rate per parameter
         new_population = list()
+
+        # Selecting Elitism to pass to the generation directly
         indices = top_n_indices(fitness_5g, numelits)
         for index in indices:
             new_population.append(old_population[index])
         probabilities = fitness_5g/np.sum(fitness_5g)
+
+        # Generating the children
         for n in range(N-numelits):
 
             # Create a new cleaner
             new_cleaner = Cleaner(nPercepts, nActions, gridSize, maxTurns)
 
-            # Here you should modify the new cleaner' chromosome by selecting two parents (based on their
-            # fitness) and crossing their chromosome to overwrite new_cleaner.chromosome
+            # Parents selection by using roulette wheel strategy
             par1Index, par2Index = np.random.choice(range(N), replace=False, p=probabilities, size=2)
             par1 = old_population[par1Index]
             par2 = old_population[par2Index]
-            # cutmiddle = int(((nPercepts - 14) + (-14 + nPercepts) * (nPercepts-15)/2)/2)
-            # new_cleaner.chromosome[:, :cutmiddle] = par1.chromosome[:, :cutmiddle]
-            # new_cleaner.chromosome[:, cutmiddle:] = par2.chromosome[:, cutmiddle:]
+            
+            # Crossover by using randomly weighted averaging 
             gamma = np.random.uniform(0, 1)
             new_cleaner.chromosome = gamma*par1.chromosome + (1-gamma)*par2.chromosome
 
 
-            # Consider implementing elitism, mutation and various other
-            # strategies for producing a new creature.
+            # Mutation
             random_float = np.random.uniform(0, 1)
             if random_float < mutation_rate_child:
                 random_matrix = np.random.random((nActions, int((nPercepts-14) + (-14+nPercepts) * (nPercepts-15) / 2)))
@@ -201,7 +201,7 @@ def newGeneration(old_population):
             # Add the new cleaner to the new population
             new_population.append(new_cleaner)
 
-    # At the end you need to compute the average fitness and return it along with your new population
+        # compute the average fitness and return it along with new population
         avg_fitness = np.mean(fitness)
         fitness_5g = np.zeros((40))
 
